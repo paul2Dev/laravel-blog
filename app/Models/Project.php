@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Jenssegers\Mongodb\Eloquent\Model as Model;
 use App\Models\User;
 use App\Models\Technology;
+use Illuminate\Support\Facades\Storage;
 
 class Project extends Model
 {
@@ -26,6 +27,16 @@ class Project extends Model
     public function technologies()
     {
         return $this->belongsToMany(Technology::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($project) {
+            // Delete the associated image file
+            Storage::delete($project->image);
+        });
     }
 
 }
