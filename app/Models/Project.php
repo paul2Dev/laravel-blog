@@ -35,7 +35,9 @@ class Project extends Model
 
         static::deleting(function ($project) {
             // Delete the associated image file
-            Storage::delete($project->image);
+            if ($project->image && Storage::exists($project->image)) {
+                Storage::delete($project->image);
+            }
         });
     }
 

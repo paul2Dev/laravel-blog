@@ -25,7 +25,9 @@ class Technology extends Model
 
         static::deleting(function ($technology) {
             // Delete the associated image file
-            Storage::delete($technology->image);
+            if ($technology->image && Storage::exists($technology->image)) {
+                Storage::delete($technology->image);
+            }
         });
     }
 
