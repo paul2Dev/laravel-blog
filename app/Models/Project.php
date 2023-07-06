@@ -12,7 +12,11 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $filable = ['title', 'content', 'image', 'user_id', 'is_published'];
+    protected $fillable = ['title', 'content', 'slug', 'image', 'user_id', 'is_published'];
+
+    protected $casts = [
+        'is_published' => 'boolean',
+    ];
 
     public function user()
     {
@@ -21,7 +25,7 @@ class Project extends Model
 
     public function technologies()
     {
-        return $this->belongsToMany(Technology::class, 'technology_project', 'project_id', 'technology_id');
+        return $this->belongsToMany(Technology::class);
     }
 
 }

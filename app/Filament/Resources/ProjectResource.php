@@ -2,28 +2,34 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TechnologyResource\Pages;
-use App\Filament\Resources\TechnologyResource\RelationManagers;
-use App\Models\Technology;
+use App\Filament\Resources\ProjectResource\Pages;
+use App\Filament\Resources\ProjectResource\RelationManagers;
+use App\Models\Project;
 use Filament\Forms;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Card;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Hidden;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\BooleanColumn;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\TextInput;
 use Closure;
-use Filament\Forms\Components\Card;
+
 use Illuminate\Support\Str;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\FileUpload;
-use Filament\Tables\Columns\ImageColumn;
 
 
-class TechnologyResource extends Resource
+class ProjectResource extends Resource
 {
-    protected static ?string $model = Technology::class;
+    protected static ?string $model = Project::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
@@ -32,14 +38,20 @@ class TechnologyResource extends Resource
         return $form
             ->schema([
                 Card::make([
-                    TextInput::make('name')->reactive()
+                    TextInput::make('title')->reactive()
                         ->afterStateUpdated(function (Closure $set, $state) {
                             $set('slug', Str::slug($state));
                         })->required(),
                     TextInput::make('slug')->required(),
+                    Select::make('technologies')
+                        ->multiple()
+                        ->relationship('technologies', 'name'),
+                    RichEditor::make('content')->required(),
                     FileUpload::make('image')
                         ->image()
-                        ->directory('technologies')
+                        ->directory('projects'),
+                    Toggle::make('is_published'),
+                    Hidden::make('user_id')->default(auth()->user()->_id),
                 ]),
             ]);
     }
@@ -48,9 +60,10 @@ class TechnologyResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->sortable(),
+                TextColumn::make('title')->sortable(),
                 TextColumn::make('slug'),
-                ImageColumn::make('image')->circular()
+                ImageColumn::make('image')->circular(),
+                BooleanColumn::make('is_published')->label('Published?')
             ])
             ->filters([
                 //
@@ -73,9 +86,9 @@ class TechnologyResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTechnologies::route('/'),
-            'create' => Pages\CreateTechnology::route('/create'),
-            'edit' => Pages\EditTechnology::route('/{record}/edit'),
+            'index' => Pages\ListProjects::route('/'),
+            'create' => Pages\CreateProject::route('/create'),
+            'edit' => Pages\EditProject::route('/{record}/edit'),
         ];
     }
 }
