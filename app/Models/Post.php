@@ -7,12 +7,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Jenssegers\Mongodb\Eloquent\Model as Model;
 use App\Models\User;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Storage;
 
 class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'content', 'image', 'user_id', 'is_published'];
+    protected $fillable = ['title', 'content', 'slug', 'image', 'user_id', 'is_published'];
+
+    protected $casts = [
+        'is_published' => 'boolean',
+    ];
 
     public function user()
     {
@@ -22,6 +27,18 @@ class Post extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($post) {
+            // Delete the associated image file
+            if ($post->image && Storage::exists($post->image)) {
+                Storage::delete($post->image);
+            }
+        });
     }
 
 }
