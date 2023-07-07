@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TechnologyResource\Pages;
 use App\Filament\Resources\TechnologyResource\RelationManagers;
+use App\Filament\Resources\TechnologyResource\RelationManagers\ProjectsRelationManager;
 use App\Models\Technology;
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -67,7 +68,7 @@ class TechnologyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ProjectsRelationManager::class,
         ];
     }
 
