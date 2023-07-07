@@ -50,7 +50,7 @@ class ProjectResource extends Resource
                         ->image()
                         ->directory('projects'),
                     Toggle::make('is_published'),
-                    Hidden::make('user_id')->default(auth()->user()->_id),
+                    Hidden::make('user_id')->default(auth()->user()->id),
                 ]),
             ]);
     }
@@ -59,9 +59,10 @@ class ProjectResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id')->sortable(),
                 TextColumn::make('title')->sortable(),
                 TextColumn::make('slug'),
-                ImageColumn::make('image')->circular(),
+                ImageColumn::make('image')->square(),
                 BooleanColumn::make('is_published')->label('Published')
             ])
             ->filters([

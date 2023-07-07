@@ -43,6 +43,7 @@ class TagResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id')->sortable(),
                 TextColumn::make('name')->sortable(),
                 TextColumn::make('slug')
             ])

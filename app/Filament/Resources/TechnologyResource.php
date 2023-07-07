@@ -48,9 +48,10 @@ class TechnologyResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('id')->sortable(),
                 TextColumn::make('name')->sortable(),
                 TextColumn::make('slug'),
-                ImageColumn::make('image')->circular()
+                ImageColumn::make('image')->square()
             ])
             ->filters([
                 //
